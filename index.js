@@ -36,35 +36,101 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var _this = this;
 var prompts = require('prompts');
-var board = [
-    [1, 1, 1, 1],
-    [1, 2, 1, 1],
-    [1, 1, 3, 4]
+var playerCash = 100;
+var SYMBOLS = [
+    { value: " A", price: 5 },
+    { value: " J", price: 2 },
+    { value: " K", price: 4 },
+    { value: "10", price: 1 },
+    { value: " Q", price: 3 },
 ];
+var board = [];
+var BOARD_ROWS = 3;
+var BOARD_COLUMNS = 3;
 var lines = [
     {
         positions: [
             { x: 0, y: 0 },
             { x: 1, y: 1 },
             { x: 2, y: 2 },
-            { x: 2, y: 3 },
+        ]
+    },
+    {
+        positions: [
+            { x: 0, y: 0 },
+            { x: 0, y: 1 },
+            { x: 0, y: 2 },
+        ]
+    },
+    {
+        positions: [
+            { x: 1, y: 0 },
+            { x: 1, y: 1 },
+            { x: 1, y: 2 },
+        ]
+    },
+    {
+        positions: [
+            { x: 2, y: 0 },
+            { x: 2, y: 1 },
+            { x: 2, y: 2 },
+        ]
+    },
+    {
+        positions: [
+            { x: 2, y: 0 },
+            { x: 1, y: 1 },
+            { x: 0, y: 2 },
         ]
     }
 ];
 (function () { return __awaiter(_this, void 0, void 0, function () {
+    var response, row, index;
     return __generator(this, function (_a) {
-        board.forEach(function (row) {
-            console.log(row.join(" - "));
-        });
-        lines.forEach(function (line) {
-            var lineValues = [];
-            line.positions.forEach(function (position) {
-                var value = board[position.x][position.y];
-                console.log(value);
-                lineValues.push(value);
-            });
-            console.log(lineValues);
-        });
-        return [2 /*return*/];
+        switch (_a.label) {
+            case 0:
+                if (!true) return [3 /*break*/, 2];
+                return [4 /*yield*/, prompts({
+                        type: 'toggle',
+                        name: 'answer',
+                        message: "Spin?",
+                        active: "Yes",
+                        inactive: "No"
+                    })];
+            case 1:
+                response = _a.sent();
+                if (!response.answer) {
+                    return [3 /*break*/, 2];
+                }
+                //cost per spin
+                playerCash -= 1;
+                for (row = 0; row < BOARD_ROWS; row++) {
+                    board[row] = [];
+                    for (index = 0; index < BOARD_COLUMNS; index++) {
+                        board[row].push(SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]);
+                    }
+                }
+                //Create a function to display board
+                board.forEach(function (row) {
+                    var elements = [];
+                    row.forEach(function (symbol) {
+                        elements.push(symbol.value);
+                    });
+                    console.log(elements.join(" - "));
+                });
+                lines.forEach(function (line) {
+                    var lineValues = [];
+                    line.positions.forEach(function (position) {
+                        lineValues.push(board[position.x][position.y]);
+                    });
+                    if (lineValues.every(function (value, i, values) { return value === values[0]; })) {
+                        console.log("We got a line");
+                        playerCash += lineValues[0].price;
+                    }
+                });
+                console.log("Player cash: " + playerCash);
+                return [3 /*break*/, 0];
+            case 2: return [2 /*return*/];
+        }
     });
 }); })();
